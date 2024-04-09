@@ -2,22 +2,45 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+// import { ConvexHull } from 'three/examples/jsm/math/ConvexHull.js';
 
+
+// globals
 let renderer, scene, camera;
-let skyMapOld;
+let cameraPosOld;
 let factor = 1;
 let confs = [];
+let icos = [];
 let index = 1;
 let counter =0; 
 let N;
 let dt = 0.001;
 let R = 2.103;
 let sigma = 0.1;
+
+
+
 // Create a group to hold all the spheres
 let sphereGroup = new THREE.Group();
 
+// Keyboard controls
+const speed = 0.1;
+const keys = {};
+
+document.addEventListener('keydown', (event) => {
+	keys[event.code] = true;
+});
+document.addEventListener('keyup', (event) => {
+	keys[event.code] = false;
+});
+
 init();
 animate();
+
+// -----------------------------------------------------------------------------
+
+// FUNCTIONS
 
 function mapValueToColor(value, min, max) {
     // Normalize the value between 0 and 1
@@ -40,6 +63,7 @@ function mapValueToColor(value, min, max) {
     return color;
 }
 
+
 function init() {
 
 	renderer = new THREE.WebGLRenderer();
@@ -50,16 +74,16 @@ function init() {
 	scene = new THREE.Scene();
 
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100 );
-	camera.position.set( 0, 0, -0.1 );
-
+	camera.position.set( 0, 0, 0. );
+	cameraPosOld = camera.position.clone();
 	new OrbitControls( camera, renderer.domElement );
 
-	
-	const tj = globalFileContent.split('\n');
-	
+	// parsing the coordinates\
+	console.log("Reading the coordinates...")
+	const tj = coordFile.content.split('\n');
 	N = parseInt(tj[0]);
 	const nconfs = Math.floor((tj.length)/(N+2),)
-	console.log("Ecco",N,nconfs);
+
 	// read all confs 
 	const blockLen = N+2;
 
@@ -75,8 +99,36 @@ function init() {
 		confs.push(frame);
 		
 	}
+	console.log("Read ", N, "coordinates of",confs.length, "frames");
 
-	console.log(confs[0]['x']);
+	// parsing the icosahedral clusters
+
+	console.log("Reading the icosahedral clusters...")
+	const icotj = icoFile.content.split('\n');
+	let first = true;
+	var frame ;
+	for (let i = 0; i < icotj.length; i++) {
+		
+		if (icotj[i].includes("Frame")){
+			
+			if (first==false){
+				icos.push(frame)
+			}
+			frame = []
+			first = false;
+
+		}
+		else {
+			let clusterIndices = icotj[i].split(' ').map(str => parseInt(str));;
+			// skip first value because it is the cluster ID
+			frame.push(clusterIndices.slice(1));
+		}
+		
+	}
+	// add last one
+	icos.push(frame)
+	console.log(icos);
+
 	// Sky
 
 	const canvas = document.createElement( 'canvas' );
@@ -98,11 +150,9 @@ function init() {
 		new THREE.SphereGeometry( R ),
 		new THREE.MeshBasicMaterial( { map: skyMap, side: THREE.BackSide } )
 	);
+
 	sky.name  = "sky";
-
 	scene.add( sky );
-
-
 	// Create spheres
 
 	console.log("Here is confs", confs[index]);
@@ -111,7 +161,6 @@ function init() {
 		// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 		// const material = new THREE.MeshPhongMaterial({ color: 0x00ff00, shininess: 1000 }); // shiny green material
 		const material = new THREE.MeshPhongMaterial({ color: mapValueToColor(confs[index]['w'][i],-R,R), shininess: 1000 }); // shiny green material
-	
 		// const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, metalness: 1, roughness: 0 });
 		const sphere = new THREE.Mesh(geometry, material);
 		// console.log("spheres ",confs[index]['x'][i],confs[index]['y'][i],confs[index]['z'][i]);
@@ -121,16 +170,12 @@ function init() {
 		}
 	}
 
-	// for (let i = 0; i < 10; i++) {
-	// 	const geometry = new THREE.SphereGeometry(0.1, 32,   32 );
-	// 	// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-	// 	const material = new THREE.MeshPhongMaterial({ color: 0x00ff00, shininess: 1000 }); // shiny green material
-	// 	// const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, metalness: 1, roughness: 0 });
-	// 	const sphere = new THREE.Mesh(geometry, material);
-	// 	sphere.position.set(i-5,i-5,i-5);
-	// 	sphereGroup.add(sphere); // Add sphere to the group
-	// }
 	scene.add(sphereGroup);
+
+	// now the icosahedra
+	
+
+	// lights
 	const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 	directionalLight.position.set(1, 1, 1).normalize();
 	scene.add(directionalLight);
@@ -140,7 +185,7 @@ function init() {
 	const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // soft white ambient light
 	scene.add(ambientLight);
 
-
+	// parameters for GUI
 	const parameters={'dt':dt};
 
 	function update() {
@@ -157,7 +202,7 @@ function init() {
 
 }
 
-// Switch scene function
+// Function to Change World (i.e. if the fourth coordinate is positive/negative we are in paradise/hell)
 function switchScene() {
 	// change sign  of factor selective positive/negative w
 	factor*=-1;
@@ -240,6 +285,46 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
+	// keyboard control
+	const forwardDirection = new THREE.Vector3(); // Create a vector to store the forward direction
+	camera.getWorldDirection(forwardDirection); // Get the camera's forward direction
+	if (keys['ArrowUp']) {
+		cameraPosOld = camera.position.clone();
+		camera.position.addScaledVector(forwardDirection, speed); // Move camera forward
+		console.log(camera.position);
+	}
+	if (keys['ArrowDown']) {
+		camera.position.addScaledVector(forwardDirection, -speed); // Move camera backward
+		console.log(camera.position);
+	}
+	
+	// move to the other world if you go forward
+	const origin = new THREE.Vector3(0, 0, 0);
+	const distanceFromOrigin = camera.position.distanceTo(new THREE.Vector3(0, 0, 0));
+	const distanceFromOriginOld = cameraPosOld.distanceTo(new THREE.Vector3(0, 0, 0));
+
+	if (distanceFromOrigin>R && keys['ArrowUp'] && distanceFromOriginOld<R){
+		 // Get the direction from camera position to origin
+		 const directionToOrigin = origin.clone().sub(camera.position).normalize();
+        
+		 // Reverse the direction vector
+		 const reverseDirection = directionToOrigin.clone().negate();
+		 
+		 // Update camera position to look at a point in the opposite direction
+		 const lookAtPoint = camera.position.clone().add(reverseDirection);
+		 camera.lookAt(lookAtPoint);
+		 console.log(camera.position);
+
+		// Calculate the displacement vector by multiplying the direction vector by R
+		const displacement = camera.position.clone().sub(directionToOrigin.clone().multiplyScalar(R));
+
+			// Subtract the displacement vector from the camera's position to get the new position
+		const newPos = camera.position.clone().sub(displacement);		
+		console.log(newPos);
+		camera.position.set(newPos.x, newPos.y,newPos.z ) ;
+		// move to the other world
+		switchScene();
+	}
 	// console.log(sphereGroup);	
 	// `clear and redraw
 	// clear`
@@ -273,10 +358,55 @@ function animate() {
 
 		counter += dt;
 		
-		index = Math.floor(counter);
-		index %= confs.length;
-		// console.log(index,dt);
+
 	}
+
+	// now the icosahdra
+	// Create a ConvexHull object
+
+	console.log(icos.length);
+
+		
+	for (let j = 0; j < icos[index].length; j++) {
+		
+		// generating the indices
+		let indices = icos[index][j];
+		let x = confs[index].x;
+		let y = confs[index].y;
+		let z = confs[index].z;
+		let w = confs[index].w;
+		const xCoordinates = indices.map(idx => x[idx]);
+		const yCoordinates = indices.map(idx => y[idx]);
+		const zCoordinates = indices.map(idx => z[idx]);
+		const wCoordinates = indices.map(idx => z[idx]);
+
+		if (wCoordinates.every(value => value*factor>0)){
+		const vertices = xCoordinates.map((x, index) => new THREE.Vector3(x, yCoordinates[index], zCoordinates[index]));
+		// console.log(vertices);
+		const meshMaterial = new THREE.MeshLambertMaterial( {
+			color: 0xffffff,
+			opacity: 0.33,
+			emissive: 0xfffff,
+			side: THREE.DoubleSide,
+			transparent: true
+		} );
+
+		const meshGeometry = new ConvexGeometry( vertices );
+
+		const mesh = new THREE.Mesh( meshGeometry, meshMaterial );
+		sphereGroup.add( mesh );
+		}
+	}	
+	
+
+	
+	// index = 10;
+	index = Math.floor(counter);
+	index %= confs.length;
+	console.log(index,dt);
+
+
+
 
 
 	renderer.render( scene, camera );

@@ -15,9 +15,9 @@ let icos = [];
 let index = 1;
 let counter =0; 
 let N;
-let dt = 0.001;
+let dt = 0.5;
 let R = 2.103;
-let sigma = 0.1;
+let sigma = 0.15;
 
 
 
@@ -194,7 +194,7 @@ function init() {
 
 	// GUI panel
 	const gui = new GUI();
-	gui.add( parameters, 'dt', 0.001, 0.1, 0.001 ).onChange( update );
+	gui.add( parameters, 'dt', 0.001, 1.0, 0.001 ).onChange( update );
 	document.body.appendChild( gui.domElement );
 
 	// switch scene by pressing a key
@@ -304,24 +304,13 @@ function animate() {
 	const distanceFromOriginOld = cameraPosOld.distanceTo(new THREE.Vector3(0, 0, 0));
 
 	if (distanceFromOrigin>R && keys['ArrowUp'] && distanceFromOriginOld<R){
-		 // Get the direction from camera position to origin
-		 const directionToOrigin = origin.clone().sub(camera.position).normalize();
-        
-		 // Reverse the direction vector
-		 const reverseDirection = directionToOrigin.clone().negate();
-		 
-		 // Update camera position to look at a point in the opposite direction
-		 const lookAtPoint = camera.position.clone().add(reverseDirection);
-		 camera.lookAt(lookAtPoint);
-		 console.log(camera.position);
-
-		// Calculate the displacement vector by multiplying the direction vector by R
-		const displacement = camera.position.clone().sub(directionToOrigin.clone().multiplyScalar(R));
-
-			// Subtract the displacement vector from the camera's position to get the new position
-		const newPos = camera.position.clone().sub(displacement);		
+	
+		 camera.lookAt(origin);
+		const newPos = camera.position.normalize().multiplyScalar(0.99*R);	
 		console.log(newPos);
 		camera.position.set(newPos.x, newPos.y,newPos.z ) ;
+
+		console.log(camera.position);
 		// move to the other world
 		switchScene();
 	}
@@ -355,8 +344,6 @@ function animate() {
 			sphere.position.set(confs[index]['x'][i],confs[index]['y'][i],confs[index]['z'][i]);
 			sphereGroup.add(sphere); // Add sphere to the group
 		}
-
-		counter += dt;
 		
 
 	}
@@ -364,7 +351,7 @@ function animate() {
 	// now the icosahdra
 	// Create a ConvexHull object
 
-	console.log(icos.length);
+	// console.log(index,icos[index].length);
 
 		
 	for (let j = 0; j < icos[index].length; j++) {
@@ -380,8 +367,9 @@ function animate() {
 		const zCoordinates = indices.map(idx => z[idx]);
 		const wCoordinates = indices.map(idx => z[idx]);
 
-		if (wCoordinates.every(value => value*factor>0)){
-		const vertices = xCoordinates.map((x, index) => new THREE.Vector3(x, yCoordinates[index], zCoordinates[index]));
+		// if (wCoordinates.every(value => value*factor>0))
+		{
+		const vertices = xCoordinates.map((x, dd) => new THREE.Vector3(x, yCoordinates[dd], zCoordinates[dd]));
 		// console.log(vertices);
 		const meshMaterial = new THREE.MeshLambertMaterial( {
 			color: 0xffffff,
@@ -394,16 +382,20 @@ function animate() {
 		const meshGeometry = new ConvexGeometry( vertices );
 
 		const mesh = new THREE.Mesh( meshGeometry, meshMaterial );
+		// console.log("mesh",mesh)
 		sphereGroup.add( mesh );
 		}
-	}	
+	}
+
+	// console.log("children", sphereGroup.children.length),index;
 	
 
 	
-	// index = 10;
+	// index = 35;
+	counter += dt;
 	index = Math.floor(counter);
 	index %= confs.length;
-	console.log(index,dt);
+	// console.log(index,dt);
 
 
 

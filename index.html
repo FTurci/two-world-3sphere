@@ -61,7 +61,37 @@
 		<div id="textOverlay" class="conten"t> <h2> Hyper-hemisphere w>0 </h2> </div>
 		<div id="subtitle" class="content"><h3> Press [SPACE] to switch hemisphere </h3> </div>
 		<script>
-			let globalFileContent; // Define a global variable
+  let globalFileContent = ''; // Define a global variable
+
+// Function to load the text file using Fetch API
+async function loadTextFile(url) {
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		globalFileContent = await response.text();
+		console.log('File content loaded:', globalFileContent);
+		// Call the function or perform the actions that depend on globalFileContent here
+		loadMainScript(); // Load main.js after file loading
+	} catch (error) {
+		console.error('Error loading file:', error);
+	}
+}
+
+// Load main.js dynamically
+function loadMainScript() {
+	const script = document.createElement('script');
+	script.src = '/main.js';
+	script.type = 'module';
+	document.body.appendChild(script);
+}
+
+// Load the text file when the page is loaded
+window.onload = function() {
+	loadTextFile('output.tj');
+};
+	/*
 			// Function to load the text file using AJAX
 			function loadTextFile(url, callback) {
 				const xhr = new XMLHttpRequest();
@@ -85,8 +115,9 @@
 					globalFileContent = fileContent;
 				});
 			// };
+			*/
 		</script>
 
-		<script type="module" src="/main.js" async></script>
+		<!-- <script type="module" src="/main.js" async></script> -->
 	</body>
 </html>

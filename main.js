@@ -204,7 +204,7 @@ function switchScene() {
 		skyMaterial.needsUpdate = true; // Ensure material update
 	}
 
-	
+	window.addEventListener('resize', onWindowResize);	
 }
 
 
@@ -226,6 +226,13 @@ function changeMessage() {
 	    textElement.innerHTML = "<h2> Hyper-hemisphere w<0 </h2>";
 	}
 	else{textElement.innerHTML = "<h2> Hyper-hemisphere w>0 </h2>";}
+}
+
+function onWindowResize() {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 

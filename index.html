@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<!-- mathjax  -->
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- inter font -->
@@ -29,7 +33,7 @@
 				height: 100%;
 				position: relative;
 			}
-			#textOverlay {
+			#title {
 				/* display: none; /* Initially hidden */
 				position: absolute;
 				top: 20px;
@@ -44,6 +48,21 @@
 				color: white;
 				font-size: 20px;
 			}
+			#docs{
+				position: absolute; 
+
+				right: 20px;
+				text-align: right;
+				bottom: 60px;
+				/* display: flex; align-items: flex-end;	 */
+				color: white;
+				font-size: 16px;
+
+			}
+			#docs a{
+				color: white;
+
+			}
 			#credits {
 				position: absolute;
 				bottom: 10px;
@@ -54,7 +73,7 @@
 			#credits a {
     			color: white;
 
-	}
+		}
 		</style>
 
     <script type="importmap">
@@ -68,11 +87,17 @@
 	</head>
 	<body>
 		<div id="container"></div>
-		<div id="textOverlay" class="content"> <h2> Hyper-hemisphere w>0 </h2> </div>
+		<div id="title" class="math"> <h2> Hyper-hemisphere \( w>0 \) </h2> </div>
 		<div id="subtitle" class="content"> Press [SPACE] to switch hemisphere <br> Press [↑] to move inside the sphere <br> Press [↓] to move outside <br>
 			Use the mouse to orient the camera
 		</div>
 		<div id="credits" > <a href="https://francescoturci.net" target="_blank">Francesco Turci, 2024</a>  </div>
+		<div id="docs" > Liquid on the hyper-surface of a <a href="https://en.wikipedia.org/wiki/3-sphere" target="_blank"> 4-dimensional sphere</a>  \( x^2+y^2+z^2+w^2=R^2 \) .<br> 
+			Rendering with two ordinary 3D spheres and a mapping to each other at their surfaces. <br> 
+			Use  [↑] to travel from one into  the other. <br>
+			The 4D sphere  curvature induces icosahedral motifs, shown in cyan shaded polyhedra.<br>
+			The visualisation starts from an initial random configuration and loops over 100 snapshots.
+		</div>
 		<script>
   
   let coordFile = {'content':''};
@@ -104,8 +129,8 @@
 
 	// Load the text file when the page is loaded
 	window.onload = function() {
-		loadTextFile('output.tj',coordFile);
-		loadTextFile('output.clst.tj',icoFile);
+		loadTextFile('data/output.cold.curved/output.tj',coordFile);
+		loadTextFile('data/output.cold.curved/output.clst.tj',icoFile);
 	};
 
 		</script>

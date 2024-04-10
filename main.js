@@ -15,8 +15,8 @@ let icos = [];
 let index = 1;
 let counter =0; 
 let N;
-let dt = 0.5;
-let R = 2.103;
+let dt = 0.25;
+let R = 1.666; //2.103;
 let sigma = 0.15;
 
 
@@ -42,6 +42,18 @@ animate();
 
 // FUNCTIONS
 
+function loadTextFileNoMain(url, targetContainer) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false); // Using synchronous request (third argument is set to false)
+    xhr.send(null);
+
+    if (xhr.status === 200) {
+        targetContainer.content = xhr.responseText;
+    } else {
+        console.error('Error loading file:', xhr.status);
+    }
+}
+
 function mapValueToColor(value, min, max) {
     // Normalize the value between 0 and 1
     var t = (value - min) / (max - min);
@@ -62,22 +74,9 @@ function mapValueToColor(value, min, max) {
     
     return color;
 }
-
-
-function init() {
-
-	renderer = new THREE.WebGLRenderer();
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-
-	scene = new THREE.Scene();
-
-	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100 );
-	camera.position.set( 0, 0, 0. );
-	cameraPosOld = camera.position.clone();
-	new OrbitControls( camera, renderer.domElement );
-
+function parse_coords(){
+	// reset confs
+	confs.length = 0;
 	// parsing the coordinates\
 	console.log("Reading the coordinates...")
 	const tj = coordFile.content.split('\n');
@@ -101,10 +100,16 @@ function init() {
 	}
 	console.log("Read ", N, "coordinates of",confs.length, "frames");
 
-	// parsing the icosahedral clusters
 
+}
+function parse_icos(){
+	icos.length = 0;
+	// parsing the icosahedral clusters
+	console.log("ten", icoFile.content.split('\n')[10]);
 	console.log("Reading the icosahedral clusters...")
 	const icotj = icoFile.content.split('\n');
+	console.log(icoFile);
+	console.log("last", icotj[icotj.length-2]);
 	let first = true;
 	var frame ;
 	for (let i = 0; i < icotj.length; i++) {
@@ -127,8 +132,26 @@ function init() {
 	}
 	// add last one
 	icos.push(frame)
-	console.log(icos);
+	// console.log(icos);
 
+}
+
+function init() {
+
+	renderer = new THREE.WebGLRenderer();
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	scene = new THREE.Scene();
+
+	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100 );
+	camera.position.set( 0, 0, 0. );
+	cameraPosOld = camera.position.clone();
+	new OrbitControls( camera, renderer.domElement );
+
+	parse_coords();
+	parse_icos();
 	// Sky
 
 	const canvas = document.createElement( 'canvas' );
@@ -186,15 +209,87 @@ function init() {
 	scene.add(ambientLight);
 
 	// parameters for GUI
-	const parameters={'dt':dt};
+	const parameters={
+		'dt':dt,
+		'temperature':'cold',
+		'curvature':'high'
+	};
 
-	function update() {
+
+	function update_dt() {
 		dt = parameters.dt;
+		
 	}
+	function update_conf(){
+		console.log("hello");
+		if (parameters['temperature']=='hot' && parameters['curvature']=='high'){
+			console.log("switched to hot-high");
+			loadTextFileNoMain('data/output.hot.curved/output.tj',coordFile);
+			loadTextFileNoMain('data/output.hot.curved/output.clst.tj',icoFile);
+			
+			parse_coords();
+			parse_icos();
+			R = 1.666;
+			const skySphere = scene.getObjectByName("sky");
+			skySphere.geometry = new THREE.SphereGeometry(R, 32, 32);
+			
+		}
+		if (parameters['temperature']=='cold' && parameters['curvature']=='high'){
+			console.log("switched to cold-high");
+			loadTextFileNoMain('data/output.cold.curved/output.tj',coordFile);
+			loadTextFileNoMain('data/output.cold.curved/output.clst.tj',icoFile);
+			
+			parse_coords();
+			parse_icos();
+			R = 1.666;
+			const skySphere = scene.getObjectByName("sky");
+			skySphere.geometry = new THREE.SphereGeometry(R, 32, 32);
+		
+			
+		}
+
+		if (parameters['temperature']=='hot' && parameters['curvature']=='low'){
+			console.log("switched to hot-low");
+			loadTextFileNoMain('data/output.hot.flatter/output.tj',coordFile);
+			loadTextFileNoMain('data/output.hot.flatter/output.clst.tj',icoFile);
+			
+			parse_coords();
+			parse_icos();
+			R = 2.103;
+			const skySphere = scene.getObjectByName("sky");
+			skySphere.geometry = new THREE.SphereGeometry(R, 32, 32);
+		
+			
+		}
+		if (parameters['temperature']=='cold' && parameters['curvature']=='low'){
+			console.log("switched to cold-low");
+			loadTextFileNoMain('data/output.cold.flatter/output.tj',coordFile);
+			loadTextFileNoMain('data/output.cold.flatter/output.clst.tj',icoFile);
+			
+			parse_coords();
+			parse_icos();
+			R = 2.103;
+			const skySphere = scene.getObjectByName("sky");
+			skySphere.geometry = new THREE.SphereGeometry(R, 32, 32);
+		
+			
+		}
+		// renderer.render(scene, camera);
+
+	}
+
+
+
 
 	// GUI panel
 	const gui = new GUI();
-	gui.add( parameters, 'dt', 0.001, 1.0, 0.001 ).onChange( update );
+	gui.add( parameters, 'dt', 0.001, 1.0, 0.001 ).onChange( update_dt );
+	// Add dropdown menu for temperature
+	const temperatureOptions = ['cold', 'hot'];
+	gui.add(parameters, 'temperature',temperatureOptions).name('Temperature').onChange(update_conf); 
+	// Add dropdown menu for curvaure
+	const curvatureOptions = ['low', 'high'];
+	gui.add(parameters, 'curvature',curvatureOptions).name('Curvature').onChange(update_conf); 
 	document.body.appendChild( gui.domElement );
 
 	// switch scene by pressing a key
@@ -266,11 +361,30 @@ function onKeyDown(event) {
 
 // Function to change message
 function changeMessage() {
-    var textElement = document.getElementById('textOverlay');
-	if (factor<0){
-	    textElement.innerHTML = "<h2> Hyper-hemisphere w<0 </h2>";
-	}
-	else{textElement.innerHTML = "<h2> Hyper-hemisphere w>0 </h2>";}
+
+
+	var textElement = document.getElementById('title');
+// Clear the MathJax typesetting for the text element
+MathJax.typesetClear([textElement]);
+
+if (factor < 0) {
+    textElement.innerHTML = "<h2> Hyper-hemisphere \\( w<0 \\) </h2>";
+} else {
+    textElement.innerHTML = "<h2> Hyper-hemisphere \\( w>0 \\) </h2>";
+}
+
+// Typeset the updated content using a promise
+// MathJax.typesetPromise([textElement]).then(() => {
+//     console.log('MathJax typesetting completed');
+// }).catch((err) => {
+//     console.error('MathJax typesetting error:', err);
+// });
+
+MathJax.typeset([textElement]);
+
+
+	// MathJax.typesetPromise();
+	// console.log('hi');
 }
 
 function onWindowResize() {

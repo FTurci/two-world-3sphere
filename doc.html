@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- mathjax  -->
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- inter font -->
+		   <!-- Link to preconnect and stylesheet for Inter font -->
+		   <link rel="preconnect" href="https://rsms.me/">
+		   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+		   <!-- CSS to apply Inter font -->
+		   <style>
+			   /* CSS */
+			   :root {
+				   font-family: Inter, sans-serif;
+				   font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+			   }
+			   @supports (font-variation-settings: normal) {
+				   :root { font-family: InterVariable, sans-serif; }
+			   }
+		   </style>
+
+		<title>A liquid on the 3-sphere</title>
+        <style>
+        
+        
+        body {
+        /* line-height: 1.6; */
+        margin: 0;
+        padding-top: 150px; /* Adjust this value according to your header height */
+    }
+    
+    header {
+        background-color: #333;
+        color: #fff;
+        padding: 0px 0;
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000; /* Ensure it's above other content */
+    }
+    
+    nav {
+        display: inline-block;
+    }
+    
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    nav ul li {
+        display: inline;
+        margin-right: 50px;
+    }
+    
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        /* font-weight: bold; */
+    }
+
+
+    /* end header    */
+
+
+                    .main{
+            width: 65%;
+            margin: 0 auto;
+            /* background: #dddddd; */
+        }
+        .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+  
+        .collapsible {
+  background-color: #71c3d7cf;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  /* border-top-left-radius: 10px;  
+  border-top-right-radius: 10px;  */
+
+}
+
+.active, .collapsible:hover {
+  background-color: #0a8dadc7;
+}
+
+.content {
+  padding: 0 10px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+
+
+#square-container
+ { width: 400px; height: 400px; margin: 20px auto; }
+
+ #sphere-container
+ { width: 400px; height: 300px; margin: 20px auto; }
+
+
+        #tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            display: none;
+            pointer-events: none; /* Ensures the tooltip does not interfere with mouse events */
+            z-index: 10; /* Ensure it appears above other elements */
+        }
+        #threejs-canvas {
+            display: block;
+            /* width: 100%; */
+            /* height: 100%; */
+        }
+        #threejs-container:hover #tooltip {
+            display: block;
+        }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <h1 > A liquid on the 3-sphere</h1>
+
+            <nav>
+                <ul>
+                    <li><a href="index.html"> Back to the visualisation</a></li>
+                    <li><a href="https://francescoturci.net">Credits</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+
+            <script type="importmap">
+                {
+                "imports": {
+                    "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+                    "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+                }
+                }
+          </script>
+
+   
+        <h2> What is the motivation? </h2> 
+        
+        <p>When cooled rapidly, many liquids become so viscous that they ultimately behave like solids without forming crystals. This change from liquid to non-crystalline solid is called the <b>glass transition</b>, and it is a major unsolved problem in condensed matter physics.</p>
+
+        <p>While glasses are non-crystalline and disordered, the atoms in many glassy systems are known to form transient local geometrical structures, which contribute to the high viscosity. The amount of local structure depends on the temperature and the composition of the liquid.</p>
+
+        <p>A key idea is that the amount of local structure at a given temperature and composition is dictated by the degree of so-called <b>geometric frustration</b> of the liquid and this is determined by the nature of the local structures. These act like puzzle pieces that do not quite work together, and the more so the more such pieces are incompatible with global crystalline order.  
+        </p>
+
+   <p> Interestingly, many glassforming liquids tend to form <b>icosahedral local structures</b> which are inherently incompatible with crystalline ordering. </p> Therefore, the question is: <b>can we tune frustration?</b>
+   <br>
+
+    
+        <h3>Geometric frustration</h3>
+        
+        Geometric frustaryion can be easily understood in two-dimensions, on the plane. Take a square: repeating the square many times on the plane allows you to cover the entire plane. Now try the same with a regular pentagon: you will see that this is not possible, you will always have some uncovered region of the plane. 
+  
+            <img src="textures/tiling.png" alt="tilings" class="center">
+    
+        <!-- <script type="module" src="square-tiles.js">    </script> -->
+        
+        <p>Now let's consider covering the surface of a sphere, like the Earth's surface, with pentagons instead of covering a plane. The polyhedron with only pentagonal faces is the dodecahedron, and its projection on the sphere yields connecting arcs that can create a pentagonal tiling with curved pentagons! So curving the flat plane onto the sphere allows us to cover it solely with icosahedra. </p> 
+
+        <div id="sphere-container">
+    </div>
+
+        <script type="module" src="sphere-tiling.js">    </script>
+
+<p> So far so good: we have been considering the tiling of <b> surfaces</b>. What about <b>volumes</b>?  One can make very similar considerations and discover that there are specific geometric units that do not tile (i.e. fill) our ordinary three dimensional space: these are, for example, <b>icosahedra</b>. </p>
+    <p>
+        For icosahedra to tile space, wee need to do the same as in two-dimensions: we need to curve space. But how do we curve our Euclidean, three-dimensional space? Formally, we can proceed very similarly to the planar case: we move to the surface of a higher dimensional sphere (a hypersphere), i.e. the surface of four dimensional sphere, also called <b> 3-sphere</b>.
+    </p>
+
+
+ <button type="button" class="collapsible">:: The 4D hypersphere</button>
+<div class="content">
+    <p> The surface of a four dimensional sphere of radius R is defined by the equation\[ x^2+y^2+z^2+w^2 = R^2 \]  
+        where x,y,z, w are the Cartesian coordinates in four dimensions.
+    </p>
+
+    <p> The surface is a 3-dimensional manifold, and it is called <b>3-sphere</b>.</p>
+    <p> It has no borders and can only be visualised in three dimensions via suitable projections.</p>
+</div> 
+
+<br>
+<br>
+
+
+        <h2> What are we seeing?</h2>
+        The visualisation displays the atoms of a liquid moving around in <b>curved</b> three-dimensional space. 
+        <br> The atoms are initially disordered and depending of the temperature of the liquid and the curvature of space they settle in different steady states:
+        <ul>
+            <li>at high temperature and low curvature, the system is mostly disordered </li>
+            <li>at low temperature and high curvature, the system is mostly ordered, and the ordered regions are formed by icosahedral arrangements of the atoms. </li>
+            <li> for the intermediate cases (low temperature, low curvature and high temperature, high curvature) the system is largely icosahedral, but with many defects.</li>
+        </ul>
+      
+        To understand the visualisation, we need to understand how a 3-sphere can be projected.
+
+
+        <h2>  Maps and projections</h2>
+        
+    <p></p>Again, we start with an analogy with two dimensions. The surface of the Earth can be projected in <a href="https://en.wikipedia.org/wiki/List_of_map_projections"></a> multiple ways </a> on the plane, with maps that differ by how they preserve angles or distances. Points at the borders of such maps are mapped onto each other, so that one can travel continuously from one side to the other. </p>
+        
+   A clever way to project the sphere is to think of dividing the sphere in two halves and projecting the two hemispheres on two circles. This is what Iranian polymath <a href="https://en.wikipedia.org/wiki/Al-Biruni">al Biruni</a> about the year 1000 and was known in the west as <a  href="https://en.wikipedia.org/wiki/Nicolosi_globular_projection">Nicolosi projection </a>.
+<br>
+<br>
+   <img src="textures/nicolosi.jpg" alt="nicolosi" class="center">
+<br>
+<br>
+
+<p>In this procedure, we start with the surface of a three-dimensional sphere (the earth) and end up with two two-dimensional spheres (circles), whose borders are mapped onto each other. </p>
+
+<p>The same idea can be applied to the 3-sphere: we start with the surface of a 4-dimensional object and we go down one dimension to map it onto two three-dimensional spheres. We then have two spheres to navigate and as we cross the border of one sphere, we get into the other. </p>
+
+<p>Using 3D rendering techniques we can visualise the position of the various atoms inside the spheres (with some distortion of the relative distances due to the projection). </p>
+
+
+        </main>
+
+
+
+        <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+            
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                  content.style.display = "none";
+                } else {
+                  content.style.display = "block";
+                }
+              });
+            }
+            </script>
+    </body>
+
+
+
+    </html>

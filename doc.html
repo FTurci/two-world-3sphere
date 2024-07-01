@@ -22,11 +22,12 @@
 				   :root { font-family: InterVariable, sans-serif; }
 			   }
 		   </style>
-
+	
 		<title>A liquid on the 3-sphere</title>
-        <style>
-        
-        
+	    <style>
+
+
+​        
         body {
         /* line-height: 1.6; */
         margin: 0;
@@ -80,7 +81,7 @@
   margin-right: auto;
   width: 50%;
 }
-  
+
         .collapsible {
   background-color: #71c3d7cf;
   color: white;
@@ -135,11 +136,11 @@
         }
         </style>
     </head>
-
+    
     <body>
         <header>
             <h1 > A liquid on the 3-sphere</h1>
-
+    
             <nav>
                 <ul>
                     <li><a href="index.html"> Back to the visualisation</a></li>
@@ -147,9 +148,9 @@
                 </ul>
             </nav>
         </header>
-
+    
         <main class="main">
-
+    
             <script type="importmap">
                 {
                 "imports": {
@@ -160,71 +161,74 @@
           </script>
 
    
-        <h2> What is the motivation? </h2> 
+
+        <h2> Why a liquid on a sphere? </h2> 
         
         <p>When cooled rapidly, many liquids become so viscous that they ultimately behave like solids without forming crystals. This change from liquid to non-crystalline solid is called the <b>glass transition</b>, and it is a major unsolved problem in condensed matter physics.</p>
-
+    
         <p>While glasses are non-crystalline and disordered, the atoms in many glassy systems are known to form transient local geometrical structures, which contribute to the high viscosity. The amount of local structure depends on the temperature and the composition of the liquid.</p>
-
+    
         <p>A key idea is that the amount of local structure at a given temperature and composition is dictated by the degree of so-called <b>geometric frustration</b> of the liquid and this is determined by the nature of the local structures. These act like puzzle pieces that do not quite work together, and the more so the more such pieces are incompatible with global crystalline order.  
         </p>
 
-   <p> Interestingly, many glassforming liquids tend to form <b>icosahedral local structures</b> which are inherently incompatible with crystalline ordering. </p> Therefore, the question is: <b>can we tune frustration?</b>
+   <p> Interestingly, many glassforming liquids tend to form <b>icosahedral local structures</b> which are inherently incompatible with crystalline ordering, but are <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.117.075501">closely related</a> to <b>quasi-crystalline</b> ordering. </p> Therefore, it is natural to wonder: can we control the propensity of such liquids to form icosahedra? can this be done by <b>tuning the frustration</b> of the icosahedra?
    <br>
-
+        The answer is that this can be done (in an abstract sense) by <b>curving space</b>.
     
-        <h3>Geometric frustration</h3>
+
+        <h3>Geometric frustration and curvature</h3>
         
-        Geometric frustaryion can be easily understood in two-dimensions, on the plane. Take a square: repeating the square many times on the plane allows you to cover the entire plane. Now try the same with a regular pentagon: you will see that this is not possible, you will always have some uncovered region of the plane. 
-  
+      Geometric frustration is easier to understand in two dimensions. If you take a square and repeat it many times on the plane, you can cover the entire plane. However, if you try to do the same with a regular pentagon, you will see that it is not possible. There will always be some uncovered region of the plane.
+      
             <img src="textures/tiling.png" alt="tilings" class="center">
     
         <!-- <script type="module" src="square-tiles.js">    </script> -->
         
         <p>Now let's consider covering the surface of a sphere, like the Earth's surface, with pentagons instead of covering a plane. The polyhedron with only pentagonal faces is the dodecahedron, and its projection on the sphere yields connecting arcs that can create a pentagonal tiling with curved pentagons! So curving the flat plane onto the sphere allows us to cover it solely with icosahedra. </p> 
-
+    
         <div id="sphere-container">
     </div>
-
+    
         <script type="module" src="sphere-tiling.js">    </script>
 
 <p> So far so good: we have been considering the tiling of <b> surfaces</b>. What about <b>volumes</b>?  One can make very similar considerations and discover that there are specific geometric units that do not tile (i.e. fill) our ordinary three dimensional space: these are, for example, <b>icosahedra</b>. </p>
     <p>
-        For icosahedra to tile space, wee need to do the same as in two-dimensions: we need to curve space. But how do we curve our Euclidean, three-dimensional space? Formally, we can proceed very similarly to the planar case: we move to the surface of a higher dimensional sphere (a hypersphere), i.e. the surface of four dimensional sphere, also called <b> 3-sphere</b>.
+        For icosahedra to tile space, we need to do the same as in two-dimensions: we need to curve space. But how do we curve our Euclidean, three-dimensional space? Formally, we can proceed very similarly to the planar case: we move from our conventional Euclidean three-dimensional space to the surface of a higher dimensional sphere (a hypersphere), i.e. the surface of four dimensional sphere, also called <b> 3-sphere</b>.
     </p>
 
 
  <button type="button" class="collapsible">:: The 4D hypersphere</button>
 <div class="content">
-    <p> The surface of a four dimensional sphere of radius R is defined by the equation\[ x^2+y^2+z^2+w^2 = R^2 \]  
-        where x,y,z, w are the Cartesian coordinates in four dimensions.
+    <p> The surface of a four dimensional sphere of radius \( R \) is defined by the equation\[ x^2+y^2+z^2+w^2 = R^2 \]  
+        where \(x,y,z, w \) are the Cartesian coordinates in four dimensions.
     </p>
 
     <p> The surface is a 3-dimensional manifold, and it is called <b>3-sphere</b>.</p>
     <p> It has no borders and can only be visualised in three dimensions via suitable projections.</p>
+    
+    <p> Its curvature is defined as the inverse of the radius \( \kappa = 1/R \)
 </div> 
 
 <br>
 <br>
-
-
         <h2> What are we seeing?</h2>
-        The visualisation displays the atoms of a liquid moving around in <b>curved</b> three-dimensional space. 
-        <br> The atoms are initially disordered and depending of the temperature of the liquid and the curvature of space they settle in different steady states:
+​        The visualisation displays the atoms of a liquid moving around in <b>curved</b> three-dimensional space, on the surface of hypersphere of radius \(R \) . The larger \ R \) , the lower the curvature. 
+​        <br> The atoms are initially disordered and depending of the temperature of the liquid and the curvature of space they settle in different steady states:
         <ul>
             <li>at high temperature and low curvature, the system is mostly disordered </li>
             <li>at low temperature and high curvature, the system is mostly ordered, and the ordered regions are formed by icosahedral arrangements of the atoms. </li>
             <li> for the intermediate cases (low temperature, low curvature and high temperature, high curvature) the system is largely icosahedral, but with many defects.</li>
         </ul>
-      
+​      
+
         To understand the visualisation, we need to understand how a 3-sphere can be projected.
 
 
         <h2>  Maps and projections</h2>
         
     <p></p>Again, we start with an analogy with two dimensions. The surface of the Earth can be projected in <a href="https://en.wikipedia.org/wiki/List_of_map_projections"></a> multiple ways </a> on the plane, with maps that differ by how they preserve angles or distances. Points at the borders of such maps are mapped onto each other, so that one can travel continuously from one side to the other. </p>
-        
-   A clever way to project the sphere is to think of dividing the sphere in two halves and projecting the two hemispheres on two circles. This is what Iranian polymath <a href="https://en.wikipedia.org/wiki/Al-Biruni">al Biruni</a> about the year 1000 and was known in the west as <a  href="https://en.wikipedia.org/wiki/Nicolosi_globular_projection">Nicolosi projection </a>.
+
+   A clever way to represent the sphere is to think of dividing the sphere in two halves and projecting the two hemispheres on two circles. This is what Iranian polymath <a href="https://en.wikipedia.org/wiki/Al-Biruni">al Biruni</a> did about the year 1000 and was known in the west as <a  href="https://en.wikipedia.org/wiki/Nicolosi_globular_projection">Nicolosi projection</a>.
 <br>
 <br>
    <img src="textures/nicolosi.jpg" alt="nicolosi" class="center">
@@ -233,9 +237,23 @@
 
 <p>In this procedure, we start with the surface of a three-dimensional sphere (the earth) and end up with two two-dimensional spheres (circles), whose borders are mapped onto each other. </p>
 
-<p>The same idea can be applied to the 3-sphere: we start with the surface of a 4-dimensional object and we go down one dimension to map it onto two three-dimensional spheres. We then have two spheres to navigate and as we cross the border of one sphere, we get into the other. </p>
+<p>The same idea can be applied to the 3-sphere: we start with the surface of a 4-dimensional object and we go down one dimension to map it onto two three-dimensional spheres. We then have two spheres to navigate and as we cross the border of one sphere, we get into the other. We have then two ordinary (3d) spheres, where we can place the simulated atoms and observe their rearrangements.</p>
 
-<p>Using 3D rendering techniques we can visualise the position of the various atoms inside the spheres (with some distortion of the relative distances due to the projection). </p>
+<p> It is interesting to note that this picture of the four dimensional sphere (the so-called two-ball construction) was well established already in the Middle Ages and may have <a href="https://doi.org/10.1103/PhysRevLett.118.215501 https://link.springer.com/chapter/10.1007/978-3-319-06254-9_2"> influenced Dante Alighieri </a> in his conception of the structure of the universe, with Paradise and the Earth themselves representing the two three-dimensional spheres that together achieve the unity of a four-dimensional universe.</p>
+
+<h2>Glassformers and local structure on the 3-sphere</h2>
+
+<p>Using 3D rendering techniques we can visualise the position of the various atoms inside the spheres (with some distortion of the relative distances due to the projection). Each atom \( i \) has four coordinates \(x_i,y_i,z_i, w_i \)  but we only represent three, and us the fourth to decide on which hemisphere to locate the atom.</p>
+
+<p> The visualisation shows a sphere with many smaller balls representing the liquid atoms. The sphere changes color when we move from positive to negative fourth coordinate \( w\) meaning that we move from one hemi-sphere to the other.</p>
+
+<p> For every atom, we can study its local environment and identify the presence of icosahedral patterns. These are shown as white shaded polyhedra, which can overlap and form regions of local order. </p>
+
+
+
+
+
+
 
 
         </main>

@@ -292,6 +292,9 @@ function init() {
 	gui.add(parameters, 'curvature',curvatureOptions).name('Curvature').onChange(update_conf); 
 	document.body.appendChild( gui.domElement );
 
+	// const gui2 = new GUI();
+	// document.body.appendChild( gui2.domElement );
+
 	// switch scene by pressing a key
 	document.addEventListener('keydown', onKeyDown, false);
 

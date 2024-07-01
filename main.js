@@ -512,6 +512,13 @@ function animate() {
 	counter += dt;
 	index = Math.floor(counter);
 	index %= confs.length;
+
+	var textElement = document.getElementById('time');
+	// Clear the MathJax typesetting for the text element
+	MathJax.typesetClear([textElement]);
+	
+		textElement.innerHTML = "frame "+index;
+
 	// console.log(index,dt);
 
 

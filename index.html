@@ -1,154 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<!-- mathjax  -->
-		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
-		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- inter font -->
-		   <!-- Link to preconnect and stylesheet for Inter font -->
-		   <link rel="preconnect" href="https://rsms.me/">
-		   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-		   <!-- CSS to apply Inter font -->
-		   <style>
-			   /* CSS */
-			   :root {
-				   font-family: Inter, sans-serif;
-				   font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
-			   }
-			   @supports (font-variation-settings: normal) {
-				   :root { font-family: InterVariable, sans-serif; }
-			   }
-		   </style>
-
-		<title>A liquid on the 3-sphere</title>
-		<style>
-			body {
-				margin: 0;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-				position: relative;
-			}
-			#title {
-				/* display: none; /* Initially hidden */
-				position: absolute;
-				top: 20px;
-				left: 20px;
-				color: white;
-				font-size: 20px;
-			}
-			#subtitle {
-				position: absolute;
-				top: 100px;
-				left: 20px;
-				color: white;
-				font-size: 20px;
-			}
-			#time {
-				position: absolute;
-				top: 240px;
-				left: 20px;
-				color: white;
-				font-size: 20px;
-			}
-			#docs{
-				position: absolute; 
-
-				right: 20px;
-				text-align: right;
-				bottom: 60px;
-				/* display: flex; align-items: flex-end;	 */
-				color: white;
-				font-size: 20px;
-
-			}
-			#docs a{
-				color: white;
-				background-color: black;
-
-			}
-			#credits {
-				position: absolute;
-				bottom: 10px;
-				left: 20px;
-				color: white;
-				font-size: 10px;
-			}
-			#credits a {
-    			color: white;
-
-		}
-		</style>
-
-    <script type="importmap">
-        {
-        "imports": {
-            "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(to right, #ff7500, #004c87);;
+            font-family: Arial, sans-serif;
         }
+
+        .container {
+            text-align: center;
         }
-  </script>
-	</head>
-	<body>
-		<div id="container"></div>
-		<div id="title" class="math"> <h2> Hyper-hemisphere \( w>0 \) </h2> </div>
-		<div id="subtitle" class="content"> Press [SPACE] to switch hemisphere <br> Press [↑] to move inside the sphere <br> Press [↓] to move outside <br>
-			Use the mouse to orient the camera <br><br></div>
-		<div id="time" class="content"> frame 1
-		
-		</div>
 
-		<div id="credits" > <a href="https://francescoturci.net" target="_blank">Francesco Turci, 2024</a>  </div>
-		<div id="docs" >
+        .navigate-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            color: #010002;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-			<a href="doc.html" >  <h2> [more info] </h2></a> 
-<!-- 			
-			Atoms of a liquid on the hyper-surface of a <a href="doc.html" > 4-dimensional sphere</a>  \( x^2+y^2+z^2+w^2=R^2 \) .<br> 
-			Rendering with two ordinary 3D spheres and a mapping to each other at their surfaces. <br> 
-			Use  [↑] to travel from one into  the other. <br>
-			The 4D sphere  curvature induces icosahedral motifs, shown in cyan shaded polyhedra.<br>
-			The visualisation starts from an initial random configuration and loops over 100 snapshots. <br>
-				See reference publication DOI: <a href="DOI:https://doi.org/10.1103/PhysRevLett.118.215501"> https://doi.org/10.1103/PhysRevLett.118.215501</a>			</b> -->
-		</div>
-		<script>
-  
-  let coordFile = {'content':''};
-  let icoFile = {'content':''};
-
-	// Function to load the text file using Fetch API
-	async function loadTextFile(url,targetContainer) {
-		try {
-			const response = await fetch(url);
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			targetContainer.content = await response.text();
-			// console.log('File content loaded:', globalFileContent);
-			// Call the function or perform the actions that depend on globalFileContent here
-			loadMainScript(); // Load main.js after file loading
-		} catch (error) {
-			console.error('Error loading file:', error);
-		}
-	}
-
-	// Load main.js dynamically
-	function loadMainScript() {
-		const script = document.createElement('script');
-		script.src = '/main.js';
-		script.type = 'module';
-		document.body.appendChild(script);
-	}
-
-	// Load the text file when the page is loaded
-	window.onload = function() {
-		loadTextFile('data/output.cold.curved/output.tj',coordFile);
-		loadTextFile('data/output.cold.curved/output.clst.tj',icoFile);
-	};
-
-		</script>
-	</body>
+        .navigate-button:hover {
+            background-color: #f5f82988;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="visual.html"><button class="navigate-button">Navigate through a liquid on the 3-sphere</button></a>
+    </div>
+</body>
 </html>
